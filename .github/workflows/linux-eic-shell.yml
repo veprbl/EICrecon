@@ -87,24 +87,22 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: cvmfs-contrib/github-action-cvmfs@v3
-    - name: Install tools
-      run: |
-        wget -q -O - https://files.pvs-studio.com/etc/pubkey.txt \
-          | sudo apt-key add -
-        sudo wget -O /etc/apt/sources.list.d/viva64.list \
-          https://files.pvs-studio.com/etc/viva64.list
-        sudo apt update
-        sudo apt install pvs-studio
-        pvs-studio-analyzer credentials "${{ secrets.PVS_STUDIO_NAME }}" "${{ secrets.PVS_STUDIO_KEY }}"
     - uses: actions/download-artifact@v3
       with:
         name: build-clang-eic-shell-Debug
         path: build/
-    - name: Analyze
+    - name: Install tools & Analyze
       uses: eic/run-cvmfs-osg-eic-shell@main
       with:
         platform-release: "jug_xl:nightly"
         run: |
+          wget -q -O - https://files.pvs-studio.com/etc/pubkey.txt \
+            | sudo apt-key add -
+          sudo wget -O /etc/apt/sources.list.d/viva64.list \
+            https://files.pvs-studio.com/etc/viva64.list
+          sudo apt update
+          sudo apt install pvs-studio
+          pvs-studio-analyzer credentials "${{ secrets.PVS_STUDIO_NAME }}" "${{ secrets.PVS_STUDIO_KEY }}"
           find . -name "*.cc" -type f -exec sed -e '1i// This is an open source non-commercial project. Dear PVS-Studio, please check it.' -e '1i// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com' -i {} \;
           pvs-studio-analyzer analyze -f build/compile_commands.json -j
     - name: Convert report
