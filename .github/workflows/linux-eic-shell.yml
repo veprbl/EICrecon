@@ -472,16 +472,6 @@ jobs:
       with:
         repository: 'eic/epic-capybara'
         path: epic-capybara
-    - name: Build and install epic-capybara
-      uses: eic/run-cvmfs-osg-eic-shell@main
-      if: steps.download_previous_artifact.outputs.found_artifact == 'true'
-      with:
-        platform-release: "jug_xl:nightly"
-        setup: /opt/detector/setup.sh
-        run: |
-          pip install hatch
-          cd epic-capybara
-          ~/.local/bin/hatch build
     - name: Compare to previous artifacts
       uses: eic/run-cvmfs-osg-eic-shell@main
       if: steps.download_previous_artifact.outputs.found_artifact == 'true'
@@ -489,8 +479,13 @@ jobs:
         platform-release: "jug_xl:nightly"
         setup: /opt/detector/setup.sh
         run: |
-          echo "::group::pip install"
+          echo "::group::pip install .github/requirements.txt"
           python3 -m pip install -r ${{ github.workspace }}/.github/requirements.txt
+          echo "::endgroup::"
+          echo "::group::Build and install epic-capybara"
+          pip install hatch
+          cd epic-capybara
+          ~/.local/bin/hatch build
           pip install dist/*.whl
           echo "::endgroup::"
           mkdir capybara-reports
