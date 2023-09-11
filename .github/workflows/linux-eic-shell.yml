@@ -481,7 +481,7 @@ jobs:
         run: |
           pip install hatch
           cd epic-capybara
-          hatch build
+          ~/.local/bin/hatch build
     - name: Compare to previous artifacts
       uses: eic/run-cvmfs-osg-eic-shell@main
       if: steps.download_previous_artifact.outputs.found_artifact == 'true'
