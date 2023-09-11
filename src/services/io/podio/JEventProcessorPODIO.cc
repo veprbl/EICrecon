@@ -98,7 +98,7 @@ JEventProcessorPODIO::JEventProcessorPODIO() {
             "InclusiveKinematicsElectron",
             "InclusiveKinematicsTruth",
             "GeneratedJets",
-            "GeneratedChargedJets"
+            "GeneratedChargedJets",
             "ReconstructedJets",
             "ReconstructedChargedJets",
             "ReconstructedElectrons",
