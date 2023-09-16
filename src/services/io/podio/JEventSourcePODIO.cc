@@ -9,6 +9,7 @@
 // it is limited to processing only a single event at a time.
 
 #include "JEventSourcePODIO.h"
+#include <services/io/podio/JFactoryPodioT.h>
 
 #include <JANA/JApplication.h>
 #include <JANA/JEvent.h>
@@ -49,7 +50,12 @@ struct InsertingVisitor {
     void operator() (const T& collection) {
 
         using ContentsT = decltype(collection[0]);
-        m_event.InsertCollectionAlreadyInFrame<ContentsT>(&collection, m_collection_name);
+        // This needs to be m_event.InsertCollectionAlreadyInFrame<ContentsT>(&collection, m_collection_name);
+        // but JFactoryPodioT from JANA triggers a bug
+        // reimplement https://github.com/JeffersonLab/JANA2/blob/ea9ebf5aa2f0e00db587cf08ec106030188e54b7/src/libraries/JANA/JEvent.h#L497
+        auto factory = new eicrecon::JFactoryPodioT<ContentsT>();
+        factory->SetCollectionAlreadyInFrame(&collection);
+        factory->SetInsertOrigin(m_event.GetJCallGraphRecorder()->GetInsertDataOrigin());
     }
 };
 

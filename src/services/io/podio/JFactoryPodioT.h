@@ -11,6 +11,10 @@
 #include "datamodel_glue.h"
 
 
+struct InsertingVisitor;
+template<typename Visitor>
+struct VisitPodioCollection;
+
 namespace eicrecon {
 
 template <typename T>
@@ -50,6 +54,10 @@ public:
 private:
     // This is meant to be called by JEvent::Insert
     friend class JEvent;
+    friend struct ::InsertingVisitor;
+    template<typename Visitor>
+    friend struct ::VisitPodioCollection;
+
     void SetCollectionAlreadyInFrame(const CollectionT* collection);
 
 };
